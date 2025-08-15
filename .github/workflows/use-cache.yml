@@ -1,0 +1,32 @@
+name: Use cache on PR
+
+on:
+  pull_request:
+
+jobs:
+  use-cache:
+    runs-on: ubuntu-latest
+    env:
+      CACHE_KEY: word-cache-v1
+      CACHE_PATH: .cache/word.txt
+    steps:
+      - name: Restore cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CACHE_PATH }}
+          key: ${{ env.CACHE_KEY }}
+          restore-keys: |
+            word-cache-
+
+      - name: Print cached value
+        run: |
+          if [ -f "${CACHE_PATH}" ]; then
+            echo "✅ Cached file found!"
+            echo "---------------------"
+            cat "${CACHE_PATH}"
+            echo "---------------------"
+          else
+            echo "❌ No cache found for key '${CACHE_KEY}'."
+            exit 1
+          fi

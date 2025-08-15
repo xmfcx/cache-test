@@ -1,0 +1,35 @@
+name: Seed cache (word.txt)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  seed-cache:
+    runs-on: ubuntu-latest
+    env:
+      CACHE_KEY: word-cache-v1
+      CACHE_PATH: .cache/word.txt
+    steps:
+      - name: Ensure cache dir exists
+        run: mkdir -p .cache
+
+      - name: Restore (or create) cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CACHE_PATH }}
+          key: ${{ env.CACHE_KEY }}
+
+      - name: Write file if cache miss
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "hello-from-cache 👋" > "${CACHE_PATH}"
+          echo "Created at: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> "${CACHE_PATH}"
+          echo "Wrote:"
+          cat "${CACHE_PATH}"
+
+      - name: Show what we have
+        run: |
+          ls -lah .cache
+          echo "Value in cache:"
+          cat "${CACHE_PATH}"
