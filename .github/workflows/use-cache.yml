@@ -10,7 +10,7 @@ jobs:
       CACHE_KEY: word-cache-v1
       CACHE_PATH: .cache/word.txt
     steps:
-      - name: Restore cache
+      - name: Restore cache test
         id: cache
         uses: actions/cache@v4
         with:
